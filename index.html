@@ -1,0 +1,112 @@
+<html>
+	<head>
+		<title>CFL Draft Order Picker</title>
+	</head>
+	<body>
+		<h1>CFL Draft Order Picker</h1>
+		<form id="draftInput">
+			<div class="team">
+				<div class="name">BC</div>
+				<div class="count"><input type="number" name="bc_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Calgary</div>
+				<div class="count"><input type="number" name="cgy_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Edmonton</div>
+				<div class="count"><input type="number" name="edm_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Ottawa</div>
+				<div class="count"><input type="number" name="ott_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Toronto</div>
+				<div class="count"><input type="number" name="tor_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Hamilton</div>
+				<div class="count"><input type="number" name="ham_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Montreal</div>
+				<div class="count"><input type="number" name="mtl_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Saskatchewan</div>
+				<div class="count"><input type="number" name="ssk_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+			<div class="team">
+				<div class="name">Winnipeg</div>
+				<div class="count"><input type="number" name="wpg_count" class="numberInput" min="1" max="9" step="1" /></div>
+				<div class="balls"></div>
+			</div>
+		</form>
+
+		<form id="pickInput">
+			<div class="container">
+				<div class="total">
+					Total number of balls: <span class="totalBalls"></span>
+				</div>
+				<div class="doit">
+					<input class="pickIt" type="button" value="Pick next team" />
+				</div>
+			</div>
+		</form>
+
+		<div class="output">
+			<ol id="teamList">
+			</ol>
+		</div>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script>
+			$(document).ready( function($) {
+				var $teams = $('#draftInput .team'),
+					$teamList = $('#teamList'),
+					$teamBalls = $teams.find('.balls'),
+					$pickForm = $('#pickInput'),
+					$totalBalls = $pickForm.find('.totalBalls'),
+					$pickButton = $pickForm.find('input.pickIt');
+
+				// D = "global" object for -D-raft order picker
+				var D = {
+					inputListener: function (el) {
+						$teamList.empty();
+						$teamBalls.empty();
+						$totalBalls.empty();
+
+						var $myBalls = $(this).parent().siblings('.balls');
+						console.log('inputListener', $(this), $myBalls);
+
+						var count = 1;
+						$teams.each(function(index) {
+							var $team = $(this),
+								ballCount = parseInt($team.find('.numberInput').val(), 10),
+								$ballDisplay = $team.find('.balls'),
+								bottom = count,
+								top;
+								if(ballCount) {
+									top = count + ballCount,
+									count = top + 1;
+									$ballDisplay.text(bottom + ' - ' + top);
+								}
+
+								$totalBalls.text(count - 1);
+						});
+					},
+					teamBalls: [],
+				}
+				$teams.on('change', 'input', {}, D.inputListener);
+			});
+		</script>
+	</body>
+</html>
