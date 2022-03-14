@@ -87,6 +87,21 @@
 						var $myBalls = $(this).parent().siblings('.balls');
 						console.log('inputListener', $(this), $myBalls);
 
+						$teams.each(function(index) {
+							var $team = $(this),
+								$ballDisplay = $team.find('.balls');
+
+								$ballDisplay.removeData('used');
+								$ballDisplay.css('color', '')
+								$ballDisplay.removeData('bottom');
+								$ballDisplay.removeData('top');
+								$ballDisplay.empty();
+
+								D.setCounts();
+						});
+					},
+
+					setCounts: function() {
 						var count = 1;
 						$teams.each(function(index) {
 							var $team = $(this),
@@ -94,18 +109,65 @@
 								$ballDisplay = $team.find('.balls'),
 								bottom = count,
 								top;
+								if($ballDisplay.data('used')) {
+									return;
+								}
+
 								if(ballCount) {
-									top = count + ballCount,
+									top = count + ballCount - 1,
 									count = top + 1;
 									$ballDisplay.text(bottom + ' - ' + top);
+									$ballDisplay.data('bottom', bottom);
+									$ballDisplay.data('top', top);
+								} else {
+									$ballDisplay.removeData('bottom');
+									$ballDisplay.removeData('top');
 								}
 
 								$totalBalls.text(count - 1);
-						});
+						})
 					},
-					teamBalls: [],
+
+					pickListener: function(el) {
+						console.log('picker');
+						var topBall = 0;
+						$teamBalls.each(function() {
+							var $ball = $(this),
+								t = $ball.data('top'),
+								used = $ball.data('used');
+							if( ! used) {
+								topBall = t && (t > topBall) ? t : topBall;
+							}
+						});
+
+						console.log('top', topBall);
+						if(topBall) {
+							var roll = Math.floor( Math.random() * (topBall + 1)),
+								rollName;
+
+							console.log('roll', roll);
+
+							$teamBalls.each(function(){
+								var $ball = $(this),
+									bottom = $ball.data('bottom'),
+									top = $ball.data('top');
+								if(top && (bottom <= roll) && (roll <= top)) {
+									$ball.data('used', 1);
+									$ball.css('color', 'red').text('used');
+									rollName = $ball.siblings('.name').text();
+								}
+							});
+							var item = "<li>" + rollName + " (roll was: " + roll + " of " + topBall + ")</li>";
+							console.log('item', $teamList[0]);
+							D.setCounts();
+							$teamList.append(item);
+						}
+					}
 				}
+
 				$teams.on('change', 'input', {}, D.inputListener);
+				$pickForm.on('submit', false);
+				$pickButton.on('click', D.pickListener);
 			});
 		</script>
 	</body>
