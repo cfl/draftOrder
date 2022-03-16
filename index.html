@@ -1,3 +1,12 @@
+<!--
+Copyright 2022, CFL Enterprises LP
+
+Draft Selection Order tool.
+
+If you find this useful you can use it.  All CFL logos, word marks,
+or other branded material muxt be removed.
+
+-->
 <html>
 	<head>
 	    <meta charset="utf-8">
@@ -6,7 +15,7 @@
 	    <!-- Bootstrap CSS -->
 	    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-		<title>CFL Draft Order Picker</title>
+		<title>CFL Draft Selection</title>
 		<style type="text/css">
 			.header-wrapper {
 				background-color: #2A292A;
@@ -41,7 +50,7 @@
 					</div>
 				</div>
 				<div class="col-sm-6 offset-sm-2 text-start text-md-end">
-					<h1 class="main-title">CFL Draft Order Picker</h1>
+					<h1 class="main-title">CFL Draft Selection</h1>
 				</div>
 			</div>
 		</div>
@@ -144,7 +153,7 @@
 					<div class="pickinput-container">
 						<div class="row pt-3 pb-3">
 							<div class="total col-9 draft-order-grey fw-bold fs-5 pt-2 pb-2">
-								Total number of balls: <span class="totalBalls"></span>
+								Total count: <span class="totalBalls"></span>
 							</div>
 						</div>
 						<div class="row pt-3">
@@ -175,6 +184,10 @@
 
 				// D = "global" object for -D-raft order picker
 				var D = {
+					fromOneToN: function(n) {
+						return Math.floor( Math.random() * n ) + 1;
+					},
+
 					inputListener: function (el) {
 						$teamList.empty();
 						$teamBalls.empty();
@@ -238,8 +251,9 @@
 
 						console.log('top', topBall);
 						if(topBall) {
-							var roll = Math.floor( Math.random() * topBall ) + 1,
-								rollName;
+							var roll, rollName;
+
+							roll = D.fromOneToN(topBall);
 
 							console.log('roll', roll);
 
@@ -249,8 +263,9 @@
 									top = $ball.data('top');
 								if(top && (bottom <= roll) && (roll <= top)) {
 									$ball.data('used', 1);
-									$ball.css('color', 'red').text('used');
-									rollName = $ball.siblings('.name').text();
+									$ball.css('color', 'red').text('selected');
+									console.log('par', $ball.parent()[0]);
+									rollName = $ball.parent().siblings('.name').text();
 								}
 							});
 							var item = "<li>" + rollName + " (roll was: " + roll + " of " + topBall + ")</li>";
